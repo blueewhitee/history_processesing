@@ -59,9 +59,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Process watch history to extract only needed fields
     async function processWatchHistory(watchHistory, apiKey) {
-        // Filter for YouTube entries
+        // Calculate date 1 month ago instead of 3
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Filter for YouTube entries from last month
         const youtubeEntries = watchHistory.filter(entry => 
-            entry.titleUrl && entry.titleUrl.includes('youtube.com/watch'));
+            entry.titleUrl && 
+            entry.titleUrl.includes('youtube.com/watch') &&
+            new Date(entry.time) >= oneMonthAgo);
+        
+        statusElement.innerHTML = `<div class="alert alert-info">Found ${youtubeEntries.length} YouTube videos from the last month. Processing...</div>`;
         
         // Extract only needed fields with video IDs
         const simplifiedEntries = youtubeEntries.map(entry => {
